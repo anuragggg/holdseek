@@ -114,6 +114,9 @@ func registerChromeHost() {
     try? fm.removeItem(at: bridge)
     guard let helper = Bundle.main.path(forAuxiliaryExecutable: "HoldSeekBridge") else { return }
     try? fm.copyItem(atPath: helper, toPath: bridge.path)
+    // A downloaded app's files carry the quarantine flag, and so would this copy; macOS would then block Chrome
+    // from launching it. The user already approved this app (it's running), so clear the flag on our own copy.
+    removexattr(bridge.path, "com.apple.quarantine", 0)
     let hosts = chrome.appendingPathComponent("NativeMessagingHosts")
     try? fm.createDirectory(at: hosts, withIntermediateDirectories: true)
     let manifest: [String: Any] = [
