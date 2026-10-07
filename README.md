@@ -29,7 +29,10 @@ Tap it and it skips tracks, exactly like before.
 | <kbd>F9</kbd> fast-forward | Next track | **Seek forward** |
 | <kbd>F7</kbd> rewind | Previous track | **Seek backward** |
 
-These are the keys on Apple keyboards. Other keyboards' Next and Previous media keys work too.
+These are the keys on Apple keyboards. Other keyboards' Next and Previous media keys work the same way.
+
+> [!TIP]
+> **No media keys?** On a keyboard without them, or a Mac set to use F1, F2, etc. as standard function keys, hold plain <kbd>F9</kbd> or <kbd>F7</kbd> while music or a video is playing. A tap still does whatever F9 or F7 normally do. They're left alone when nothing is playing, or when you hold <kbd>⌘</kbd> <kbd>⌥</kbd> <kbd>⌃</kbd> or <kbd>⇧</kbd>.
 
 | Works with | How |
 | :-- | :-- |
@@ -110,14 +113,14 @@ flowchart LR
     class tap,seek amber
 ```
 
-- HoldSeek catches the Next and Previous media keys before macOS does. If you hold a key with nothing playing, HoldSeek treats it as a tap.
+- HoldSeek catches the Next and Previous media keys before macOS does, and plain F7 and F9 while something is playing. If you hold a key with nothing playing, HoldSeek treats it as a tap.
 - It controls Music and Spotify through their scripting support.
 - For Chrome, the extension keeps track of which tab is playing. Chrome launches a small helper from HoldSeek that passes messages between the extension and the menu-bar app.
 
 ## Privacy
 
 - HoldSeek makes no network connections and collects no analytics.
-- **Accessibility** lets it catch the Next and Previous media keys. It passes every other key through untouched.
+- **Accessibility** lets it catch the Next and Previous media keys, and F7 and F9 while something is playing. Every other key passes straight through, and HoldSeek never records or stores what you type.
 - **Automation** lets it read whether Music or Spotify is playing and move the playback position.
 - The **Chrome extension** runs on every site so it can tell when a video or audio player starts or stops. On request from HoldSeek, it changes the playback position. It doesn't read page content.
 
@@ -130,6 +133,7 @@ Read the full [privacy policy and terms](PRIVACY.md).
 | Holding a key does nothing | Open the HoldSeek menu. If it shows **Grant Accessibility Access…**, HoldSeek doesn't have the permission yet. |
 | HoldSeek is switched on in Accessibility but ignores the keys | That entry belongs to an older copy of HoldSeek, usually after an update or rebuild. Remove it with **−** and add the app again with **+**. |
 | Chrome videos don't seek | The menu should show **Chrome Extension: Connected**. If it doesn't, set up the extension, then reload the video tab. |
+| My keyboard has no media keys | Hold plain **F9** or **F7** while music or a video is playing. When nothing is playing, they work as normal keys. |
 | A hold skips the track instead of seeking | Nothing was playing when the hold started, so HoldSeek treated it as a tap. |
 
 To see what HoldSeek is doing, watch its log while you press keys:

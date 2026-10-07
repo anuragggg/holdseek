@@ -12,7 +12,7 @@ Only the [latest release](https://github.com/anuragggg/holdseek/releases/latest)
 
 HoldSeek makes no network connections. It asks for:
 
-- **Accessibility**, to catch the Next and Previous media keys. Every other key passes through untouched.
+- **Accessibility**, to catch the Next and Previous media keys, and plain F7 and F9 while something is playing. Every other key passes straight through and is never recorded or stored.
 - **Automation** of Music and Spotify, to read whether they're playing and move the playback position.
 - The **Chrome extension** runs on every site to detect when a video or audio player starts or stops, and changes the playback position when HoldSeek asks. It doesn't read page content or talk to any server.
 

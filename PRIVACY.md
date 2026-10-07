@@ -8,7 +8,7 @@ HoldSeek is a lightweight utility that runs entirely locally on your Mac.
 
 - It does **not** collect, store, or transmit any personal data.
 - It does **not** use any analytics, tracking, or crash reporting tools.
-- The app only listens for the Next and Previous media keys (F7 and F9 on Apple keyboards), locally, to control active media players. Every other key passes through untouched.
+- The app acts only on the Next and Previous media keys, and on plain F7 and F9 while music or a video is playing, to control active media players. macOS shows it other key presses as they happen; HoldSeek lets them through immediately and never records, stores, or sends them anywhere.
 - The optional **Chrome extension** runs on web pages only to detect whether a video or audio player is playing, and to change its playback position when you hold a key. It doesn't read page content or browsing history, and it communicates only with the HoldSeek app on your Mac.
 
 ## Terms of Service

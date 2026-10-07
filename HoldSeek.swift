@@ -8,8 +8,11 @@ let log = Logger(subsystem: "com.holdseek.HoldSeek", category: "main")  // log s
 
 let hostName = "com.holdseek.bridge"
 let extensionID = "kaabddkhedmmhfmhhnnjmoebaeopdded"  // derived from "key" in extension/manifest.json
-let marker: Int64 = 0x484F4C44  // tags media key events we re-post, so our own tap lets them through
-let nextKeys = [17, 19]         // NX_KEYTYPE_NEXT, NX_KEYTYPE_FAST; 18 and 20 are PREVIOUS and REWIND
+let marker: Int64 = 0x484F4C44  // tags key events we re-post, so our own tap lets them through
+// Keys are NX_KEYTYPE media codes (17 NEXT, 18 PREVIOUS, 19 FAST, 20 REWIND), plus plain F7/F9 for keyboards
+// without media keys (or Macs set to "standard function keys"), stored as 1000 + their virtual key code.
+let plainF7 = 1000 + 98, plainF9 = 1000 + 101
+let nextKeys = [17, 19, plainF9]
 let supportDir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
     .appendingPathComponent("HoldSeek")
 
@@ -64,6 +67,8 @@ struct ScriptPlayer {
 
 let players = [ScriptPlayer(bundleID: "com.apple.Music"), ScriptPlayer(bundleID: "com.spotify.client")]
 var chromePlaying = false, chromeConnected = false
+var musicPlaying = false, spotifyPlaying = false  // from the apps' own notifications; read on the key thread
+var anythingPlaying: Bool { musicPlaying || spotifyPlaying || chromePlaying }
 
 func pickTarget() -> ((Double) -> Void)? {
     let player = players.first(where: \.isPlaying)
@@ -134,8 +139,9 @@ let hold = Hold()
 
 func startTap() -> Bool {
     if tap != nil { return true }
+    let keys: CGEventMask = 1 << 14 | 1 << CGEventType.keyDown.rawValue | 1 << CGEventType.keyUp.rawValue  // 14 = NX_SYSDEFINED
     tap = CGEvent.tapCreate(tap: .cgSessionEventTap, place: .headInsertEventTap, options: .defaultTap,
-                            eventsOfInterest: 1 << 14, callback: onEvent, userInfo: nil)  // 14 = NX_SYSDEFINED
+                            eventsOfInterest: keys, callback: onEvent, userInfo: nil)
     guard let tap else { return false }
     log.notice("key listener running")
     Thread {  // its own thread, so a slow AppleScript on main never delays key events
@@ -149,9 +155,11 @@ func onEvent(_: CGEventTapProxy, type: CGEventType, event: CGEvent, _: UnsafeMut
     let pass = Unmanaged.passUnretained(event)
     if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
         CGEvent.tapEnable(tap: tap!, enable: true)
+        plainHeld = nil
         DispatchQueue.main.async { hold.reset() }  // we may have missed a key release
         return pass
     }
+    if type == .keyDown || type == .keyUp { return onPlainKey(type, event) }
     guard enabled, event.getIntegerValueField(.eventSourceUserData) != marker,
           let ns = NSEvent(cgEvent: event), ns.type == .systemDefined, ns.subtype.rawValue == 8 else { return pass }
     let code = ns.data1 >> 16 & 0xFFFF, flags = ns.data1 & 0xFFFF, down = flags >> 8 == 0xA
@@ -163,7 +171,39 @@ func onEvent(_: CGEventTapProxy, type: CGEventType, event: CGEvent, _: UnsafeMut
     return nil  // swallow it; Hold re-posts it on release if it was a tap
 }
 
+var plainHeld: Int64?  // the F7/F9 press we took, so its repeats and release are taken too (key thread only)
+
+// Plain F7/F9 are ordinary keys that apps use (F9 toggles breakpoints in many editors), so they're only taken
+// bare and while something is playing. Every other key, and F7/F9 the rest of the time, passes straight through.
+func onPlainKey(_ type: CGEventType, _ event: CGEvent) -> Unmanaged<CGEvent>? {
+    let pass = Unmanaged.passUnretained(event), key = event.getIntegerValueField(.keyboardEventKeycode)
+    guard key == 98 || key == 101 else { return pass }
+    if plainHeld == nil {
+        let modified = !event.flags.intersection([.maskCommand, .maskAlternate, .maskControl, .maskShift]).isEmpty
+        guard type == .keyDown, enabled, anythingPlaying, !modified,
+              event.getIntegerValueField(.eventSourceUserData) != marker else { return pass }
+        plainHeld = key
+        log.debug("plain key \(key) down")
+        DispatchQueue.main.async { hold.down(1000 + Int(key)) }
+        return nil
+    }
+    guard key == plainHeld else { return pass }
+    if type == .keyUp {
+        plainHeld = nil
+        DispatchQueue.main.async { hold.up(1000 + Int(key)) }
+    }
+    return nil  // the held key's auto-repeats and release
+}
+
 func repost(_ code: Int) {
+    if code > 1000 {  // a plain F-key tap: give the app its key back
+        for down in [true, false] {
+            let event = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(code - 1000), keyDown: down)
+            event?.setIntegerValueField(.eventSourceUserData, value: marker)
+            event?.post(tap: .cghidEventTap)
+        }
+        return
+    }
     for state in [0xA, 0xB] {  // key down, key up
         let flags = state << 8
         let event = NSEvent.otherEvent(
@@ -220,6 +260,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             chromeConnected = state?["connected"] as? Bool ?? true
         }
         sendToChrome([:])  // ask an already-connected extension for its current state
+        for name in ["com.apple.Music.playerInfo", "com.spotify.client.PlaybackStateChanged"] {  // sent on play, pause, track change
+            DistributedNotificationCenter.default().addObserver(
+                self, selector: #selector(playerChanged), name: .init(name), object: nil, suspensionBehavior: .deliverImmediately)
+        }
 
         AXIsProcessTrustedWithOptions([kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary)
         if !startTap() {
@@ -233,6 +277,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.items[1].state = SMAppService.mainApp.status == .enabled ? .on : .off
         menu.items[2].isHidden = tap != nil
         menu.items[3].title = chromeConnected ? "Chrome Extension: Connected" : "Install Chrome Extension…"
+    }
+
+    @objc func playerChanged(_ note: Notification) {
+        let playing = note.userInfo?["Player State"] as? String == "Playing"
+        if note.name.rawValue.hasPrefix("com.apple.Music") { musicPlaying = playing } else { spotifyPlaying = playing }
     }
 
     @objc func toggleEnabled() {
@@ -297,6 +346,24 @@ func selfTest() -> Never {
     playing = false; asked = false
     h.down(19); wait { asked }; h.up(19)  // hold with nothing playing: falls back to a normal skip
     precondition(reposted == [17, 19], "hold without a player should skip")
+    playing = true; jumps = []
+    h.down(plainF9); wait { !jumps.isEmpty }; h.up(plainF9)  // plain F9, for keyboards without media keys
+    precondition(jumps.allSatisfy { $0 > 0 }, "plain F9 should seek forward")
+
+    // Plain F7/F9 are taken only bare and while something plays; every other key passes through.
+    func key(_ code: CGKeyCode, down: Bool = true, flags: CGEventFlags = []) -> CGEvent {
+        let event = CGEvent(keyboardEventSource: nil, virtualKey: code, keyDown: down)!
+        event.flags = flags
+        return event
+    }
+    func taken(_ event: CGEvent) -> Bool { onPlainKey(event.type, event) == nil }
+    chromePlaying = false
+    precondition(!taken(key(101)), "F9 should pass through when nothing is playing")
+    chromePlaying = true
+    precondition(!taken(key(0)), "other keys should always pass through")
+    precondition(!taken(key(101, flags: .maskCommand)), "⌘F9 should pass through")
+    precondition(taken(key(101)) && taken(key(101)) && taken(key(101, down: false)), "bare F9, its repeat, and release should be taken")
+    precondition(!taken(key(98, down: false)), "a release we didn't take should pass through")
     print("selftest passed")
     exit(0)
 }
