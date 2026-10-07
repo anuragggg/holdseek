@@ -51,7 +51,7 @@ These are the keys on Apple keyboards. Other keyboards' Next and Previous media 
 
 ### Download
 
-1. Download `HoldSeek.zip` from [Releases](../../releases/latest), unzip it, and move **HoldSeek** to Applications.
+1. Download `HoldSeek.zip` from [Releases](../../releases/latest) and unzip it. Move **HoldSeek.app** from the HoldSeek folder to Applications. The folder also holds the license.
 2. Double-click HoldSeek. macOS says it can't verify the app. Click **Done**, not **Move to Trash**.
 3. Open **System Settings → Privacy & Security** and scroll down to **Security**. Click **Open Anyway** next to the HoldSeek message, then confirm with your password.
 
