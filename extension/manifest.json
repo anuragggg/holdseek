@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "HoldSeek",
+  "version": "1.0",
+  "description": "Hold the Next/Previous media keys to seek videos. Requires the HoldSeek Mac app.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvc9EoP/L3QlAp4LeiyoueNB1yIcSkXXEcVIfP/Vdyr7T0Mcqu0SM5ZhAJkwYelbtzAhVwH2ZMdsjZvl94BSc0gfqzgVNvZlI3KxpzQgOHBUb8LuE71jkgFLrJp3itaTxcquD77IQnYH4sKVJlzGc5YQTgJ9Gd7t0A52yu+x3VgM/KO2cIL7V6ybdGG15d6LicdVGqaVPtuvuy5uzMv3TBy11HD0aHsue9+o/jConL9lUxG62TbjANB9V/+QrIlGys9EB/5O5jj/rLfIVWIsqLxWVusr9iiaE8u8qYzQYmzMKODTO2EhirtqkV3+vYzsphTwDyRJp1IzeGgPRT+B2owIDAQAB",
+  "icons": { "128": "icon.png" },
+  "permissions": ["nativeMessaging"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    { "matches": ["<all_urls>"], "js": ["content.js"], "all_frames": true, "run_at": "document_start" }
+  ]
+}
