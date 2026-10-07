@@ -9,6 +9,7 @@
 Hold the rewind or fast-forward key on your Mac to scrub through songs and videos.<br>
 Tap it and it skips tracks, exactly like before.
 
+[![Release](https://img.shields.io/github/v/release/anuragggg/holdseek?style=for-the-badge&label=release&labelColor=1C1C1E&color=FFB340)](../../releases/latest)
 [![macOS 13+](https://img.shields.io/badge/macOS-13%2B-FFB340?style=for-the-badge&logo=apple&logoColor=white&labelColor=1C1C1E)](#install)
 [![Swift](https://img.shields.io/badge/Swift-one_file-FFB340?style=for-the-badge&logo=swift&logoColor=white&labelColor=1C1C1E)](HoldSeek.swift)
 [![Chrome](https://img.shields.io/badge/Chrome-extension-FFB340?style=for-the-badge&logo=googlechrome&logoColor=white&labelColor=1C1C1E)](extension)
@@ -26,13 +27,12 @@ Tap it and it skips tracks, exactly like before.
 
 | Key | Tap | Hold |
 | :-- | :-- | :-- |
-| <kbd>F9</kbd> fast-forward | Next track | **Seek forward** |
-| <kbd>F7</kbd> rewind | Previous track | **Seek backward** |
-
-These are the keys on Apple keyboards. Other keyboards' Next and Previous media keys work the same way.
+| <kbd>F9</kbd> fast-forward, or any keyboard's Next key | Next track | **Seek forward** |
+| <kbd>F7</kbd> rewind, or any keyboard's Previous key | Previous track | **Seek backward** |
+| Plain <kbd>F9</kbd> / <kbd>F7</kbd>, on keyboards without media keys | Their usual action | **Seek**, while something is playing |
 
 > [!TIP]
-> **No media keys?** On a keyboard without them, or a Mac set to use F1, F2, etc. as standard function keys, hold plain <kbd>F9</kbd> or <kbd>F7</kbd> while music or a video is playing. A tap still does whatever F9 or F7 normally do. They're left alone when nothing is playing, or when you hold <kbd>⌘</kbd> <kbd>⌥</kbd> <kbd>⌃</kbd> or <kbd>⇧</kbd>.
+> **Works with any keyboard.** Apple keyboards and keyboards with media keys (Logitech, Microsoft, Keychron, and others) work out of the box. On a keyboard without media keys, or a Mac set to use F1, F2, etc. as standard function keys, hold plain <kbd>F9</kbd> or <kbd>F7</kbd> while music or a video is playing. HoldSeek leaves them alone when nothing is playing, or when you hold <kbd>⌘</kbd> <kbd>⌥</kbd> <kbd>⌃</kbd> or <kbd>⇧</kbd>, so apps that use F7 and F9 keep working.
 
 | Works with | How |
 | :-- | :-- |
@@ -44,6 +44,7 @@ These are the keys on Apple keyboards. Other keyboards' Next and Previous media 
 
 - **Taps stay native.** A quick tap goes straight back to macOS, so skipping works exactly as it does without HoldSeek.
 - **Seeks the right player.** When you hold a key, HoldSeek finds whichever of Music, Spotify, or Chrome is actually playing, and sticks with it until you let go.
+- **Any keyboard.** Apple keyboards, keyboards with media keys, and plain F7/F9 on keyboards without them.
 - **Tiny.** One Swift file with no dependencies. It's just a menu-bar icon, with no windows and nothing to set up beyond permissions.
 - **Private.** HoldSeek never connects to the internet. [More below](#privacy).
 
