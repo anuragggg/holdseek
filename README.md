@@ -13,8 +13,9 @@ Tap it and it skips tracks, exactly like before.
 [![Swift](https://img.shields.io/badge/Swift-one_file-FFB340?style=for-the-badge&logo=swift&logoColor=white&labelColor=1C1C1E)](HoldSeek.swift)
 [![Chrome](https://img.shields.io/badge/Chrome-extension-FFB340?style=for-the-badge&logo=googlechrome&logoColor=white&labelColor=1C1C1E)](extension)
 [![Network](https://img.shields.io/badge/network-none-FFB340?style=for-the-badge&labelColor=1C1C1E)](#privacy)
+[![Buy me a coffee](https://img.shields.io/badge/buy_me_a-coffee-FFB340?style=for-the-badge&logo=buymeacoffee&logoColor=white&labelColor=1C1C1E)](https://buymeacoffee.com/anuragggg)
 
-[Install](#install) · [Chrome](#chrome) · [How it works](#how-it-works) · [Troubleshooting](#troubleshooting) · [Build](#build)
+[Install](#install) · [Chrome](#chrome) · [How it works](#how-it-works) · [Troubleshooting](#troubleshooting) · [Build](#build) · [Support](#support)
 
 </div>
 
@@ -164,6 +165,12 @@ To change the icon, edit `icon.swift` and run `swift icon.swift`. It regenerates
 - The Touch Bar and headphone buttons don't send keyboard events, so HoldSeek can't see them.
 - Only Google Chrome is supported. Other Chromium browsers, such as Brave, Edge, or Arc, look for the extension's connection in their own folders.
 - The extension's ID is fixed by the `key` in `extension/manifest.json`. If the extension is ever published to the Chrome Web Store, it will get a new ID. That ID then needs adding to `extensionID` in `HoldSeek.swift`.
+
+## Support
+
+HoldSeek is free. If it saves you some scrubbing and you'd like to say thanks, you can buy me a coffee.
+
+<a href="https://buymeacoffee.com/anuragggg"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy me a coffee" height="48"></a>
 
 <br>
 
