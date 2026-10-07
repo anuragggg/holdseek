@@ -275,22 +275,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
 // MARK: - Self-check (run by build.sh)
 
+// Waits for events rather than fixed times, so it passes on slow CI machines too.
 func selfTest() -> Never {
-    var reposted: [Int] = [], jumps: [Double] = [], playing = true
+    var reposted: [Int] = [], jumps: [Double] = [], playing = true, asked = false
     let h = Hold()
     h.delay = 0.05; h.tick = 0.02
     h.repost = { reposted.append($0) }
-    h.pickTarget = { playing ? { jumps.append($0) } : nil }
-    func wait(_ seconds: Double) { RunLoop.main.run(until: Date(timeIntervalSinceNow: seconds)) }
+    h.pickTarget = { asked = true; return playing ? { jumps.append($0) } : nil }
+    func wait(until done: () -> Bool) {
+        let deadline = Date(timeIntervalSinceNow: 10)
+        while !done() && Date() < deadline { RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.01)) }
+        precondition(done(), "timed out")
+    }
 
-    h.down(17); wait(0.02); h.up(17)  // tap: the original key goes through
+    h.down(17); h.up(17)  // tap: released before the hold timer could run, so the original key goes through
     precondition(reposted == [17] && jumps.isEmpty, "tap should skip, not seek")
-    h.down(20); wait(0.15); h.up(20)  // hold: seek backward, no skip
-    precondition(reposted == [17] && jumps.count >= 3 && jumps.allSatisfy { $0 < 0 }, "hold should seek backward")
-    let count = jumps.count; wait(0.1)
+    h.down(20); wait { jumps.count >= 3 }; h.up(20)  // hold: seek backward, no skip
+    precondition(reposted == [17] && jumps.allSatisfy { $0 < 0 }, "hold should seek backward")
+    let count = jumps.count; RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.1))
     precondition(jumps.count == count, "seeking should stop on release")
-    playing = false
-    h.down(19); wait(0.1); h.up(19)  // hold with nothing playing: falls back to a normal skip
+    playing = false; asked = false
+    h.down(19); wait { asked }; h.up(19)  // hold with nothing playing: falls back to a normal skip
     precondition(reposted == [17, 19], "hold without a player should skip")
     print("selftest passed")
     exit(0)
