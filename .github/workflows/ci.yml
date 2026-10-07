@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Read-only token: a pull request can't push, comment, or touch releases.
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build and run the self-check
+        run: ./build.sh
+
+      - name: Check the extension's JavaScript
+        run: node --check extension/background.js && node --check extension/content.js
+
+      # HoldSeek promises no network access and minimal permissions. These checks fail loudly when a change
+      # breaks that promise, so it can only land as a deliberate maintainer decision (update this file too).
+      - name: Privacy guard
+        run: |
+          if grep -nE 'URLSession|NSURLConnection|NWConnection|fetch\(|XMLHttpRequest|WebSocket|sendBeacon|EventSource|curl |wget ' \
+               HoldSeek.swift extension/*.js; then
+            echo "::error::Network code found. HoldSeek must not access the network."
+            exit 1
+          fi
+          perms=$(python3 -c 'import json; m = json.load(open("extension/manifest.json")); print(m.get("permissions"), m.get("host_permissions"), m.get("optional_permissions"), [c["matches"] for c in m["content_scripts"]])')
+          if [ "$perms" != "['nativeMessaging'] None None [['<all_urls>']]" ]; then
+            echo "::error::Chrome extension permissions changed: $perms"
+            exit 1
+          fi

@@ -166,6 +166,10 @@ To change the icon, edit `icon.swift` and run `swift icon.swift`. It regenerates
 - Only Google Chrome is supported. Other Chromium browsers, such as Brave, Edge, or Arc, look for the extension's connection in their own folders.
 - The extension's ID is fixed by the `key` in `extension/manifest.json`. If the extension is ever published to the Chrome Web Store, it will get a new ID. That ID then needs adding to `extensionID` in `HoldSeek.swift`.
 
+## Contributing
+
+Ideas and fixes are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) first, and open an issue before starting anything big. To report a security problem privately, see [SECURITY.md](SECURITY.md).
+
 ## Support
 
 HoldSeek is free. If it saves you some scrubbing and you'd like to say thanks, you can buy me a coffee.
