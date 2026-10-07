@@ -13,6 +13,7 @@ Tap it and it skips tracks, exactly like before.
 [![Swift](https://img.shields.io/badge/Swift-one_file-FFB340?style=for-the-badge&logo=swift&logoColor=white&labelColor=1C1C1E)](HoldSeek.swift)
 [![Chrome](https://img.shields.io/badge/Chrome-extension-FFB340?style=for-the-badge&logo=googlechrome&logoColor=white&labelColor=1C1C1E)](extension)
 [![Network](https://img.shields.io/badge/network-none-FFB340?style=for-the-badge&labelColor=1C1C1E)](#privacy)
+[![License: MIT](https://img.shields.io/badge/license-MIT-FFB340?style=for-the-badge&labelColor=1C1C1E)](LICENSE)
 [![Buy me a coffee](https://img.shields.io/badge/buy_me_a-coffee-FFB340?style=for-the-badge&logo=buymeacoffee&logoColor=white&labelColor=1C1C1E)](https://buymeacoffee.com/anuragggg)
 
 [Install](#install) · [Chrome](#chrome) · [How it works](#how-it-works) · [Troubleshooting](#troubleshooting) · [Build](#build) · [Support](#support)
@@ -171,6 +172,10 @@ To change the icon, edit `icon.swift` and run `swift icon.swift`. It regenerates
 ## Contributing
 
 Ideas and fixes are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) first, and open an issue before starting anything big. To report a security problem privately, see [SECURITY.md](SECURITY.md).
+
+## License
+
+HoldSeek is released under the [MIT License](LICENSE).
 
 ## Support
 
