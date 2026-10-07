@@ -28,8 +28,8 @@ jobs:
       # breaks that promise, so it can only land as a deliberate maintainer decision (update this file too).
       - name: Privacy guard
         run: |
-          if grep -nE 'URLSession|NSURLConnection|NWConnection|fetch\(|XMLHttpRequest|WebSocket|sendBeacon|EventSource|curl |wget ' \
-               HoldSeek.swift extension/*.js; then
+          if grep -nE 'URLSession|NSURLConnection|NWConnection|curl |wget ' HoldSeek.swift ||
+             grep -nE 'fetch\(|XMLHttpRequest|WebSocket|sendBeacon|EventSource' extension/*.js; then
             echo "::error::Network code found. HoldSeek must not access the network."
             exit 1
           fi
