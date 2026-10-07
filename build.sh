@@ -27,10 +27,10 @@ cp "$APP/Contents/MacOS/HoldSeek" "$APP/Contents/MacOS/HoldSeekBridge"
 codesign --force --options runtime --sign "$SIGN_ID" "$APP/Contents/MacOS/HoldSeekBridge"
 codesign --force --options runtime --entitlements HoldSeek.entitlements --sign "$SIGN_ID" "$APP"
 
-ditto -c -k --keepParent "$APP" build/HoldSeek.zip
+ditto -c -k --norsrc --noextattr --keepParent "$APP" build/HoldSeek.zip
 if [ -n "${NOTARY_PROFILE:-}" ]; then
   xcrun notarytool submit build/HoldSeek.zip --keychain-profile "$NOTARY_PROFILE" --wait
   xcrun stapler staple "$APP"
-  ditto -c -k --keepParent "$APP" build/HoldSeek.zip  # re-zip so the download carries the ticket
+  ditto -c -k --norsrc --noextattr --keepParent "$APP" build/HoldSeek.zip  # re-zip so the download carries the ticket
 fi
 echo "Built $APP"
