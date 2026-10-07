@@ -120,6 +120,8 @@ flowchart LR
 - **Automation** lets it read whether Music or Spotify is playing and move the playback position.
 - The **Chrome extension** runs on every site so it can tell when a video or audio player starts or stops. On request from HoldSeek, it changes the playback position. It doesn't read page content.
 
+Read the full [privacy policy and terms](PRIVACY.md).
+
 ## Troubleshooting
 
 | Problem | Fix |
