@@ -9,10 +9,10 @@
 Hold the rewind or fast-forward key on your Mac to scrub through songs and videos.<br>
 Tap it and it skips tracks, exactly like before.
 
-[![macOS 13+](https://img.shields.io/badge/macOS-13%2B-FF9F0A?style=for-the-badge&logo=apple&logoColor=white&labelColor=1C1C1E)](#install)
-[![Swift](https://img.shields.io/badge/Swift-one_file-FF9F0A?style=for-the-badge&logo=swift&logoColor=white&labelColor=1C1C1E)](HoldSeek.swift)
-[![Chrome](https://img.shields.io/badge/Chrome-extension-FF9F0A?style=for-the-badge&logo=googlechrome&logoColor=white&labelColor=1C1C1E)](extension)
-[![Network](https://img.shields.io/badge/network-none-FF9F0A?style=for-the-badge&labelColor=1C1C1E)](#privacy)
+[![macOS 13+](https://img.shields.io/badge/macOS-13%2B-FFB340?style=for-the-badge&logo=apple&logoColor=white&labelColor=1C1C1E)](#install)
+[![Swift](https://img.shields.io/badge/Swift-one_file-FFB340?style=for-the-badge&logo=swift&logoColor=white&labelColor=1C1C1E)](HoldSeek.swift)
+[![Chrome](https://img.shields.io/badge/Chrome-extension-FFB340?style=for-the-badge&logo=googlechrome&logoColor=white&labelColor=1C1C1E)](extension)
+[![Network](https://img.shields.io/badge/network-none-FFB340?style=for-the-badge&labelColor=1C1C1E)](#privacy)
 
 [Install](#install) · [Chrome](#chrome) · [How it works](#how-it-works) · [Troubleshooting](#troubleshooting) · [Build](#build)
 
@@ -102,7 +102,7 @@ Once the extension is linked, the HoldSeek menu shows **Chrome Extension: Connec
 flowchart LR
     press["Media key pressed"] --> held{"Held for<br/>400 ms?"}
     held -- "no: a tap" --> tap["Key goes back to macOS<br/>and skips as usual"]
-    held -- "yes: a hold" --> pick["Find the player that's playing<br/>Music, then Spotify, then Chrome"]
+    held -- "yes: a hold" --> pick["Find what's playing,<br/>checking Music, Spotify,<br/>then Chrome"]
     pick --> seek["Jump 1.5 s every 0.2 s<br/>until you let go"]
     classDef amber fill:#FF9F0A,stroke:#FF9F0A,color:#1C1C1E
     class tap,seek amber
